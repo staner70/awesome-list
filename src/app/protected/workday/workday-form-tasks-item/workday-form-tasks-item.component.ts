@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'al-workday-form-tasks-item',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   ]
 })
 export class WorkdayFormTasksItemComponent implements OnInit {
+
+  @Input() task: FormGroup;
 
   constructor() { }
 

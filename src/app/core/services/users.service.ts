@@ -48,7 +48,8 @@ export class UsersService {
 
     return this.http.post(url, data, httpOptions).pipe(
       switchMap((data: any) => {
-        return of(this.getUserFromFirestore(data.documents[0].fields));
+        console.log(data);
+        return of(this.getUserFromFirestore(data[0].document.fields));
         })
     );
   }

@@ -40,4 +40,8 @@ export class NavbarComponent implements OnInit {
     this.layoutService.toggleSidenav();
   }
 
+  logout() {
+    this.authService.logout();
+  }
+
 }

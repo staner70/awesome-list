@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/user';
@@ -20,14 +21,11 @@ export class AuthService {
     private http: HttpClient, 
     private usersService: UsersService, 
     private errorService: ErrorService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService,
+    private router: Router) { }
 
-  login(email: string, password: string): Observable<User|null> {
-    // 1. A faire : Faire un appel au backend.
-    // 2. A faire : Mettre à jour l’état en fonction de la réponse du backend.
-    // 3. A faire : Retournez la réponse du backend sous la forme d’un Observable,
-    //    pour le composant qui déclenche cette action.
-    const url = `${environment.firebase.auth.baseURL}/verifyPassword?key=
+  public login(email: string, password: string): Observable<User|null> {
+    const url = `${environment.firebase.auth.baseURL}:signInWithPassword?key=
                  ${environment.firebase.apiKey}`;
     const data = {
       email: email,
@@ -39,11 +37,10 @@ export class AuthService {
     };
 
     this.loaderService.setLoading(true);
-    
-    return this.http.post<User>(url, data, httpOptions).pipe(
+    return this.http.post(url, data, httpOptions).pipe(
       switchMap((data: any) => {
-        const userId: string = data.localId;
         const jwt: string = data.idToken;
+        const userId: string = data.localId;
         return this.usersService.get(userId, jwt);
       }),
       tap(user => this.user.next(user)),
@@ -64,7 +61,7 @@ export class AuthService {
     // const API_KEY: string = 'AIzaSyAaicRMXm1VpkyiJdLPJ4Fb2IUu03ofhA0';
     // const API_AUTH_BASEURL: string = `https://www.googleapis.com/identitytoolkit/v3/relyingparty`;
     const url = `
-      ${environment.firebase.auth.baseURL}/signupNewUser?key=
+      ${environment.firebase.auth.baseURL}:signUp?key=
       ${environment.firebase.apiKey}
     `
     
@@ -98,6 +95,7 @@ export class AuthService {
 
 
     logout() {
-      return of(null);
+      this.user.next(null);
+      this.router.navigate(['/login']);
     }
 }

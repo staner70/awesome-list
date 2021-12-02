@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../core/guards/auth.guard';
 // import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
-import { ParametersComponent } from './parameters/parameters/parameters.component';
-import { PlanningComponent } from './planning/planning/planning.component';
-import { ProfilComponent } from './profil/profil/profil.component';
+// import { ParametersComponent } from './parameters/parameters/parameters.component';
+// import { PlanningComponent } from './planning/planning/planning.component';
+// import { ProfilComponent } from './profil/profil/profil.component';
 import { ProtectedComponent } from './protected.component';
-import { WorkdayComponent } from './workday/workday/workday.component';
+// import { WorkdayComponent } from './workday/workday/workday.component';
 
 const routes: Routes = [
   {
     path: 'app', 
     component: ProtectedComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { 
         path: 'dashboard',

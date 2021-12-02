@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { catchError, delay, finalize, switchMap, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/user';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from './error.service';
@@ -44,6 +44,7 @@ export class AuthService {
         return this.usersService.get(userId, jwt);
       }),
       tap(user => this.user.next(user)),
+      tap(_ => this.logoutTimer(3600)),
       catchError(error => this.errorService.handleError(error)),
       finalize(() => this.loaderService.setLoading(false))
     );
@@ -88,11 +89,17 @@ export class AuthService {
         return this.usersService.save(user, jwt);
       }),
       tap(user => this.user.next(user)),
+      tap(_ => this.logoutTimer(3600)),
       catchError(error => this.errorService.handleError(error)),
       finalize(() => this.loaderService.setLoading(false))
     );
   }
 
+  private logoutTimer(expirationTime: number): void {
+    of(true).pipe(
+      delay(expirationTime * 1000),
+    ).subscribe(_ => this.logout());
+  }
 
     logout() {
       this.user.next(null);

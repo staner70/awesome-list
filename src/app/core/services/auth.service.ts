@@ -7,6 +7,7 @@ import { User } from 'src/app/shared/models/user';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from './error.service';
 import { LoaderService } from './loader.service';
+import { ToastrService } from './toastr.service';
 import { UsersService } from './users.service';
 
 @Injectable({
@@ -22,7 +23,8 @@ export class AuthService {
     private usersService: UsersService, 
     private errorService: ErrorService,
     private loaderService: LoaderService,
-    private router: Router) { }
+    private router: Router,
+    private toastrService: ToastrService) { }
 
   public login(email: string, password: string): Observable<User|null> {
     const url = `${environment.firebase.auth.baseURL}:signInWithPassword?key=
@@ -122,5 +124,24 @@ export class AuthService {
   autoLogin(user: User) {
     this.user.next(user);
     this.router.navigate(['app/dashboard'])
+  }
+
+  updateUserState(user: User): Observable<User|null> {
+    this.loaderService.setLoading(true);
+
+    return this.usersService.update(user).pipe(
+      tap(user => this.user.next(user)),
+      tap(_ => this.toastrService.showToastr({
+        category: 'success',
+        message: 'Vos informations ont été mise à jour !'
+      })),
+      catchError(error => this.errorService.handleError(error)),
+      finalize(() => this.loaderService.setLoading(false))
+
+    );
+  }
+
+  get currentUser(): User|null {
+    return this.user.getValue();
   }
 }

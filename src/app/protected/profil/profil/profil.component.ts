@@ -30,7 +30,7 @@ export class ProfilComponent implements OnInit {
         Validators.pattern('^[a-zA-Z0-9_-]*$')
       ]],
       'avatar': [this.user?.avatar, [
-        Validators.pattern('^https?://.+')
+        Validators.pattern('https?://.+')
       ]]
     });
 
@@ -43,7 +43,7 @@ export class ProfilComponent implements OnInit {
     if(this.user) {
       this.user.name = this.name?.value;
       this.user.avatar = this.avatar?.value;
-      this.authService.updateUserState(this.user).subscribe;
+      this.authService.updateUserState(this.user).subscribe();
     }
   }
 

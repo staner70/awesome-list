@@ -1,15 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import { Task } from 'src/app/shared/models/task';
 import { Workday } from 'src/app/shared/models/workday';
 import { environment } from 'src/environments/environment';
+import { ErrorService } from './error.service';
+import { LoaderService } from './loader.service';
+import { ToastrService } from './toastr.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkdaysService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private toastrService: ToastrService,
+    private errorService: ErrorService,
+    private loaderService: LoaderService) { }
 
   save(workday: Workday) {
     const url = `${environment.firebase.firestore.baseURL}/workdays?key=${environment.firebase.apiKey}`;
@@ -21,9 +29,19 @@ export class WorkdaysService {
         'Authorization': `Bearer ${jwt}`
       })
     };
-    return this.http.post(url, data, httpOptions);
+    this.loaderService.setLoading(true);
+
+    return this.http.post(url, data, httpOptions).pipe(
+      tap(_ => this.toastrService.showToastr({
+        category: 'success',
+        message: 'Workday saved successfully'
+      })),
+      catchError(error => this.errorService.handleError(error)),
+      finalize(() => this.loaderService.setLoading(false))
+    );
 
   }
+
   private getWorkdayForFirestore( workday: Workday ): any {
     if (typeof workday.dueDate === 'string') {
       workday.dueDate = +workday.dueDate;

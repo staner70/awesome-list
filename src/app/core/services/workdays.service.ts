@@ -22,7 +22,7 @@ export class WorkdaysService {
     private errorService: ErrorService,
     private loaderService: LoaderService) { }
 
-  getWorkByDate(date: string, userId: string): Observable<Workday|null> {
+  getWorkdayByDate(date: string, userId: string): Observable<Workday|null> {
     const url = `${environment.firebase.firestore.baseURL}:runQuery?key=${environment.firebase.apiKey}`;
     const data = this.getStructuredQuery(date, userId);
     const jwt: string = localStorage.getItem('token')!;
@@ -100,6 +100,27 @@ export class WorkdaysService {
       finalize(() => this.loaderService.setLoading(false))
     );
 
+  }
+
+  update(workday: Workday) {
+    const url = `${environment.firebase.firestore.baseURL}/workdays/${workday.id}?key=${environment.firebase.apiKey}&currentDocument.exists=true`;
+    const data = this.getWorkdayForFirestore(workday);
+    const jwt: string = localStorage.getItem('token')!;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      })
+    };
+
+    return this.http.patch(url, data, httpOptions).pipe(
+      tap(_ => this.toastrService.showToastr({
+        category: 'success',
+        message: 'Workday updated successfully'
+      })),
+      catchError(error => this.errorService.handleError(error)),
+      finalize(() => this.loaderService.setLoading(false))
+    );
   }
 
   private getWorkdayForFirestore( workday: Workday ): any {

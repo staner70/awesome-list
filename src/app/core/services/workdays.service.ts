@@ -95,7 +95,28 @@ export class WorkdaysService {
 
   }
 
-  //remove
+  //remove workday
+  remove(workday: Workday) {
+    const url = `${environment.firebase.firestore.baseURL}/workdays/${workday.id}?key=${environment.firebase.apiKey}`;
+    const jwt: string = localStorage.getItem('token')!;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      })
+    };
+
+    return this.http.delete(url, httpOptions).pipe(
+      tap(_ => this.toastrService.showToastr({
+        category: 'success',
+        message: 'Workday removed successfully'
+      })),
+      catchError(error => this.errorService.handleError(error)),
+      finalize(() => this.loaderService.setLoading(false))
+    );
+    
+  }
+  
 
   getWorkdayByDate(date: string, userId: string): Observable<Workday|null> {
     const url = `${environment.firebase.firestore.baseURL}:runQuery`;

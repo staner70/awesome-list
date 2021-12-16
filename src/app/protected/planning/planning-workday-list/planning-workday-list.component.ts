@@ -28,7 +28,8 @@ export class PlanningWorkdayListComponent implements OnInit {
    }
 
   onWorkdayRemoved(workday: Workday) {
-    console.info(workday.dueDate);
+    this.workdayService.remove(workday)
+    .subscribe(_ => this.workdays = this.workdays.filter( el => el.id !== workday.id));
   }
 
 }

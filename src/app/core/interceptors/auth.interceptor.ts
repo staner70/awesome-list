@@ -33,6 +33,6 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     private isPublicRequest(url: string): boolean {
-        return (url.includes('verifyPassword') || url.includes('signupNewUser'));
+        return (url.includes('signInWithPassword') || url.includes('signUp'));
     }
 }

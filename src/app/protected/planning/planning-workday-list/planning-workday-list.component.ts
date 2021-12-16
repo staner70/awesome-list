@@ -28,7 +28,7 @@ export class PlanningWorkdayListComponent implements OnInit {
    }
 
   onWorkdayRemoved(workday: Workday) {
-    console.info(workday);
+    console.info(workday.dueDate);
   }
 
 }

@@ -34,17 +34,17 @@ export class AuthService {
       password: password,
       returnSecureToken: true
     };
-    const httpOptions = {
-      headers: new HttpHeaders({'Content-Type': 'application/json'})
-    };
+    // const httpOptions = {
+    //   headers: new HttpHeaders({'Content-Type': 'application/json'})
+    // };
 
     this.loaderService.setLoading(true);
-    return this.http.post(url, data, httpOptions).pipe(
+    return this.http.post(url, data, {}).pipe(
       switchMap((data: any) => {
         const jwt: string = data.idToken;
         const userId: string = data.localId;
         this.saveAuthData(userId, jwt);
-        return this.usersService.get(userId, jwt);
+        return this.usersService.get(userId);
       }),
       tap(user => this.user.next(user)),
       tap(_ => this.logoutTimer(3600)),
@@ -54,12 +54,12 @@ export class AuthService {
 
   }
 
-  submit() {
-  //   this.authService.login('John', 'Doe').subscribe(user => {
-  //    this.user = user;
-  //    // Effectuer une autre action, avec l’utilisateur venant de s’inscrire.
-  //   });
-  }
+  // submit() {
+  // //   this.authService.login('John', 'Doe').subscribe(user => {
+  // //    this.user = user;
+  // //    // Effectuer une autre action, avec l’utilisateur venant de s’inscrire.
+  // //   });
+  // }
 
    register(name: string, email: string, password: string): Observable<User|null> {
     // const API_KEY: string = 'AIzaSyAaicRMXm1VpkyiJdLPJ4Fb2IUu03ofhA0';
@@ -75,13 +75,13 @@ export class AuthService {
       returnSecureToken: true
     };
 
-    const httpOptions = {
-      headers: new HttpHeaders({'Content-Type': 'application/json'})
-    };
+    // const httpOptions = {
+    //   headers: new HttpHeaders({'Content-Type': 'application/json'})
+    // };
 
     this.loaderService.setLoading(true);
 
-    return this.http.post(url, data, httpOptions).pipe(
+    return this.http.post(url, data, {}).pipe(
       switchMap((data: any) => {
         const jwt: string = data.idToken;
         const user = new User({
@@ -90,7 +90,7 @@ export class AuthService {
           name: name,
         });
         this.saveAuthData(data.localId, jwt);
-        return this.usersService.save(user, jwt);
+        return this.usersService.save(user);
       }),
       tap(user => this.user.next(user)),
       tap(_ => this.logoutTimer(3600)),

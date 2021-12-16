@@ -30,11 +30,11 @@ export class AppComponent implements OnInit {
 
     // On connecte l'utilisateur avec les informations de connexions stockées
     const userId: string = localStorage.getItem('userId')!;
-    console.log(token);
+    // console.log(token);
     
     
-    this.usersService.get(userId, token).subscribe(user => {
-      console.log(user);
+    this.usersService.get(userId).subscribe(user => {
+      // console.log(user);
       if(!user) { return; };
       this.authService.autoLogin(user);
     });

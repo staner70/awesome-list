@@ -5,17 +5,17 @@ pour afficher une journée de travail à l'utilisateur.
 <al-dashboard-pomodoro-progress>
 </al-dashboard-pomodoro-progress>
  
-<div class="text-center my-3">
-  <button class="btn btn-success btn-sm">
+<div *ngIf="!isPomodoroActive" class="text-center my-3">
+  <button (click)="startPomodoro()" class="btn btn-success btn-sm">
     Démarrer le Pomodoro
   </button>
 </div>
  
-<div class="text-center my-3">
-  <button class="btn btn-sm mr-1">
+<div *ngIf="isPomodoroActive" class="text-center my-3">
+  <button (click)="cancelPomodoro()" class="btn btn-sm mr-1">
     Annuler le Pomodoro
   </button>
-  <button class="btn btn-success btn-sm">
+  <button (click)="completePomodoro()" class="btn btn-success btn-sm">
     Terminé le Pomodoro
   </button>
 </div>

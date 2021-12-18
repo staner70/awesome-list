@@ -7,11 +7,27 @@ import { Workday } from 'src/app/shared/models/workday';
   styleUrls: ['./dashboard-workday.component.scss']
 })
 export class DashboardWorkdayComponent implements OnInit {
+  
   @Input() workday: Workday;
+  isPomodoroActive: boolean;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.isPomodoroActive = false;
   }
+
+  startPomodoro() {
+    this.isPomodoroActive = true;
+  }
+
+  cancelPomodoro() {
+    this.isPomodoroActive = false;
+  }
+
+  completePomodoro() {
+    this.isPomodoroActive = false;
+  }
+  
 
 }
